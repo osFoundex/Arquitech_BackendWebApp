@@ -1,4 +1,4 @@
-package com.acme.arquitech.platform.projects.repositories;
+package com.acme.arquitech.platform.projects.infrastructure.persistence.jpa.repositories;
 
 import com.acme.arquitech.platform.projects.domain.model.aggregates.Project;
 import com.acme.arquitech.platform.users.domain.model.valueobjects.Role;
