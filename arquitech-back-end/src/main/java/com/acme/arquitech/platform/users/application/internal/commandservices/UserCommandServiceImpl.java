@@ -20,6 +20,10 @@ public class UserCommandServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
+        // Basic validation (can be extended with more checks)
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("User with email " + user.getEmail() + " already exists");
+        }
         return userRepository.save(user);
     }
 

@@ -5,6 +5,6 @@ import com.acme.arquitech.platform.users.domain.model.valueobjects.Role;
 
 import java.util.List;
 
-public interface ProjectService {
+public interface ProjectQueryService {
     List<Project> findByUserIdAndRole(Long userId, Role role);
 }
