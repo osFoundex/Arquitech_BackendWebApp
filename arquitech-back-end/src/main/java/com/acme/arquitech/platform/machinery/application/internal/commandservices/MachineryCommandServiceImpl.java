@@ -35,4 +35,22 @@ public class MachineryCommandServiceImpl implements MachineryService {
     public List<Machinery> getAll() {
         return machineryRepository.findAll();
     }
+
+    public Machinery update(Long id, Machinery updatedMachinery) {
+        Machinery existing = machineryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Machinery with ID " + id + " not found"));
+        // Update fields (we assume projectId is immutable as in the controller)
+        existing.setName(updatedMachinery.getName());
+        existing.setLicensePlate(updatedMachinery.getLicensePlate());
+        existing.setRegisterDate(updatedMachinery.getRegisterDate());
+        existing.setStatus(updatedMachinery.getStatus());
+
+        return machineryRepository.save(existing);
+        }
+    public void delete(Long id) {
+        if (!machineryRepository.existsById(id)) {
+            throw new IllegalArgumentException("Machinery with ID " + id + " not found");
+        }
+        machineryRepository.deleteById(id);
+    }
 }

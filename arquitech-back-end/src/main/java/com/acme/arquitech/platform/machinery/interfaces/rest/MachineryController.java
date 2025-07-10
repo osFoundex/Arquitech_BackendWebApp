@@ -5,6 +5,7 @@ import com.acme.arquitech.platform.machinery.domain.exception.MachineryNotFoundE
 import com.acme.arquitech.platform.machinery.domain.model.aggregates.Machinery;
 import com.acme.arquitech.platform.machinery.interfaces.rest.resources.CreateMachineryResource;
 import com.acme.arquitech.platform.machinery.interfaces.rest.resources.MachineryResource;
+import com.acme.arquitech.platform.machinery.interfaces.rest.resources.UpdateMachineryResource;
 import com.acme.arquitech.platform.shared.interfaces.rest.resources.MessageResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -82,5 +83,42 @@ public class MachineryController {
                 machinery.getStatus()
         );
         return new ResponseEntity<>(machineryResource, HttpStatus.OK);
+    }
+    @Operation(summary = "Update an existing machinery entry")
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateMachinery(@PathVariable Long id, @RequestBody UpdateMachineryResource resource) {
+        try {
+            var existingMachinery = machineryService.getById(id)
+                    .orElseThrow(() -> new MachineryNotFoundException(id));
+            var updatedMachinery = new Machinery(
+                    existingMachinery.getProjectId(),
+                    resource.name(),
+                    resource.licensePlate(),
+                    resource.registerDate(),
+                    resource.status()
+            );
+
+            var savedMachinery = machineryService.update(id, updatedMachinery);
+
+            var machineryResource = new MachineryResource(
+                    savedMachinery.getId(),
+                    savedMachinery.getProjectId(),
+                    savedMachinery.getName(),
+                    savedMachinery.getLicensePlate(),
+                    savedMachinery.getRegisterDate(),
+                    savedMachinery.getStatus()
+            );
+
+            return new ResponseEntity<>(machineryResource, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(new MessageResource(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @Operation(summary = "Delete machinery by ID")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<MessageResource> deleteMachinery(@PathVariable Long id) {
+        machineryService.getById(id).orElseThrow(() -> new MachineryNotFoundException(id));
+        machineryService.delete(id);
+        return ResponseEntity.ok(new MessageResource("Machinery deleted successfully"));
     }
 }

@@ -59,4 +59,8 @@ public class WorkerCommandServiceImpl implements WorkerService {
     public Optional<Worker> findById(Long id) {
         return workerRepository.findById(id);
     }
+
+    public List<Worker> getAll() {
+        return workerRepository.findAll();
+    }
 }

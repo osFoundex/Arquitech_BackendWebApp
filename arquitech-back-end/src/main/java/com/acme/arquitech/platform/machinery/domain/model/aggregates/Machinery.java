@@ -21,14 +21,14 @@ public class Machinery extends AuditableAbstractAggregateRoot<Machinery> {
     @Setter
     @Column(nullable = false)
     private String name;
-
+    @Setter
     @Column(name = "license_plate", nullable = false, unique = true)
     private String licensePlate;
-
+    @Setter
     @Column(name = "register_date", nullable = false)
     @Temporal(TemporalType.DATE)
     private Date registerDate;
-
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MachineryStatus status;

@@ -48,4 +48,7 @@ public class MaterialQueryServiceImpl implements MaterialService {
                 .map(material -> (material.getQuantity() - material.getQuantityExit()) < minimumLevel)
                 .orElse(false);
     }
+    public List<Material> findAll() {
+        return materialRepository.findAll();
+    }
 }

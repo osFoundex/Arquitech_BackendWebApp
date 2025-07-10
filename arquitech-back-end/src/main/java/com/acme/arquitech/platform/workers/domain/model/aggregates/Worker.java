@@ -42,4 +42,8 @@ public class Worker extends AuditableAbstractAggregateRoot<Worker> {
         this.hiredDate = hiredDate;
         this.project = project;
     }
+
+    public void setId(Long id) {
+        this.id=id;
+    }
 }

@@ -1,9 +1,10 @@
 package com.acme.arquitech.platform.projects.domain.model.aggregates;
 
+import com.acme.arquitech.platform.iam.domain.model.aggregates.User;
 import com.acme.arquitech.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.acme.arquitech.platform.projects.domain.model.valueobjects.ProjectStatus;
-import com.acme.arquitech.platform.users.domain.model.aggregates.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -51,5 +52,9 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
         this.user = user;
         this.contractor = contractor;
         this.imageUrl = imageUrl;
+    }
+
+    public void setId( Long id) {
+        this.id = id;
     }
 }

@@ -70,4 +70,9 @@ public class TaskCommandServiceImpl implements TaskService {
     public Optional<Task> findById(Long id) {
         return taskRepository.findById(id);
     }
+
+    public List<Task> findAll() {
+        return taskRepository.findAll();
+    }
+
 }

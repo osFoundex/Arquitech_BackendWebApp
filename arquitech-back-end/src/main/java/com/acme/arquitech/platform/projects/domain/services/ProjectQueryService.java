@@ -1,7 +1,7 @@
 package com.acme.arquitech.platform.projects.domain.services;
 
+import com.acme.arquitech.platform.iam.domain.model.valueobjects.Role;
 import com.acme.arquitech.platform.projects.domain.model.aggregates.Project;
-import com.acme.arquitech.platform.users.domain.model.valueobjects.Role;
 
 import java.util.List;
 

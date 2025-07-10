@@ -56,6 +56,14 @@ public class MaterialController {
         return new ResponseEntity<>(toResource(savedMaterial), HttpStatus.CREATED);
     }
 
+    @GetMapping
+    public ResponseEntity<List<MaterialResource>> getAllMaterials() {
+        List<MaterialResource> resources = queryService.findAll()
+                .stream()
+                .map(this::toResource)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(resources, HttpStatus.OK);
+    }
     @GetMapping("/{id}")
     public ResponseEntity<MaterialResource> getMaterial(@PathVariable Long id) {
         return queryService.findById(id)
@@ -72,7 +80,7 @@ public class MaterialController {
 
     @PostMapping("/{id}/use")
     public ResponseEntity<MaterialResource> useMaterial(@PathVariable Long id, @RequestBody UpdateMaterialResource resource) {
-        Material updatedMaterial = commandService.useMaterial(id, resource.quantity(), resource.exitDate());
+        Material updatedMaterial = commandService.useMaterial(id, resource.quantity(), String.valueOf(resource.exitDate()));
         return new ResponseEntity<>(toResource(updatedMaterial), HttpStatus.OK);
     }
 
@@ -128,6 +136,33 @@ public class MaterialController {
         );
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<MaterialResource> updateMaterial(
+            @PathVariable Long id,
+            @RequestBody UpdateMaterialResource resource) {
+        try {
+            Material updatedMaterial = commandService.updateMaterial(
+                    id,
+                    resource.name(),
+                    resource.quantity(),
+                    resource.unitPrice(),
+                    resource.unit(),
+                    resource.provider(),
+                    resource.providerRuc(),
+                    resource.date(),
+                    resource.receiptNumber(),
+                    resource.paymentMethod(),
+                    resource.entryType(),
+                    resource.exitType(),
+                    resource.exitDate()
+            );
+            return new ResponseEntity<>(toResource(updatedMaterial), HttpStatus.OK);
+        } catch (MaterialNotFoundException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (InvalidMaterialDataException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
     @ExceptionHandler(MaterialNotFoundException.class)
     public ResponseEntity<MessageResource> handleMaterialNotFound(MaterialNotFoundException ex) {
         return new ResponseEntity<>(new MessageResource(ex.getMessage()), HttpStatus.NOT_FOUND);

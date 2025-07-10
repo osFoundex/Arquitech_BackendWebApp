@@ -77,4 +77,13 @@ public class IncidentCommandServiceImpl implements IncidentService {
             throw new RuntimeException("Error generating PDF report", e);
         }
     }
+    public List<Incident> findAll() {
+        return incidentRepository.findAll();
+    }
+    public void delete(Long id) {
+        if (!incidentRepository.existsById(id)) {
+            throw new IllegalArgumentException("Incident with ID " + id + " not found");
+        }
+        incidentRepository.deleteById(id);
+    }
 }

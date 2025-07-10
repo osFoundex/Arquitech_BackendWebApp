@@ -1,13 +1,13 @@
 package com.acme.arquitech.platform.projects.internal.commandservices;
 
 
+import com.acme.arquitech.platform.iam.domain.model.aggregates.User;
+import com.acme.arquitech.platform.iam.infrastructure.persistence.jpa.repositories.UserRepository;
 import com.acme.arquitech.platform.projects.domain.model.aggregates.Project;
 import com.acme.arquitech.platform.projects.domain.model.valueobjects.ProjectStatus;
 import com.acme.arquitech.platform.projects.domain.services.ProjectCommandService;
 import com.acme.arquitech.platform.projects.infrastructure.persistence.jpa.repositories.ProjectRepository;
-import com.acme.arquitech.platform.users.domain.model.aggregates.User;
 
-import com.acme.arquitech.platform.users.infrastructure.persistence.jpa.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

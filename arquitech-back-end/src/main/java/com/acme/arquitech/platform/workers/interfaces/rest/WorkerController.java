@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/projects/{projectId}/workers")
+@RequestMapping("/api/v1/workers")
 @Tag(name = "Workers", description = "Worker Management Endpoints")
 public class WorkerController {
     private final WorkerCommandServiceImpl workerCommandService;
@@ -31,16 +31,18 @@ public class WorkerController {
     }
 
     @PostMapping
-    public ResponseEntity<WorkerResource> createWorker(@PathVariable Long projectId, @Valid @RequestBody CreateWorkerResource resource) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project with ID " + projectId + " not found"));
+    public ResponseEntity<WorkerResource> createWorker(@RequestBody CreateWorkerResource resource) {
+        Project project = new Project();
+        project.setId(resource.projectId()); // Inherit projectId without needing @PathVariable
         Worker worker = new Worker(
                 new WorkerName(resource.name()),
                 new WorkerRole(resource.role()),
                 resource.hiredDate(),
                 project
         );
+
         Worker savedWorker = workerCommandService.create(worker);
+
         WorkerResource response = new WorkerResource(
                 savedWorker.getId(),
                 savedWorker.getName().value(),
@@ -48,6 +50,7 @@ public class WorkerController {
                 savedWorker.getHiredDate(),
                 savedWorker.getProject().getId()
         );
+
         return ResponseEntity.ok(response);
     }
 
@@ -80,12 +83,11 @@ public class WorkerController {
         return ResponseEntity.ok(new MessageResource("Worker deleted successfully"));
     }
 
+
+
     @GetMapping
-    public ResponseEntity<?> getWorkersByProject(@PathVariable Long projectId) {
-        List<Worker> workers = workerCommandService.findByProjectId(projectId);
-        if (workers.isEmpty()) {
-            return ResponseEntity.ok(new MessageResource("No workers registered for this project"));
-        }
+    public ResponseEntity<List<WorkerResource>> getAllWorkers() {
+        List<Worker> workers = workerCommandService.getAll();
         List<WorkerResource> resources = workers.stream()
                 .map(worker -> new WorkerResource(
                         worker.getId(),

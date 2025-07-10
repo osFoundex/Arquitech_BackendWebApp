@@ -10,6 +10,7 @@ import com.acme.arquitech.platform.materials.infrastructure.persistence.jpa.repo
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -71,4 +72,37 @@ public class MaterialCommandServiceImpl implements MaterialService {
             throw new InvalidMaterialDataException("Material name is required");
         }
     }
+    public Material updateMaterial(
+            Long id,
+            String name,
+            Integer quantity,
+            BigDecimal unitPrice,
+            String unit,
+            String provider,
+            String providerRuc,
+            String date,
+            String receiptNumber,
+            String paymentMethod,
+            String entryType,
+            String exitType,
+            String exitDate
+    ) {
+        Material material = materialRepository.findById(id)
+                .orElseThrow(() -> new MaterialNotFoundException(id));
+        material.setName(name);
+        material.setQuantity(quantity);
+        material.setUnitPrice(unitPrice);
+        material.setUnit(unit);
+        material.setProvider(provider);
+        material.setProviderRuc(providerRuc);
+        material.setDate(date);
+        material.setReceiptNumber(receiptNumber);
+        material.setPaymentMethod(paymentMethod);
+        material.setEntryType(entryType);
+        material.setExitType(exitType);
+        material.setExitDate(exitDate);
+
+        return materialRepository.save(material);
+    }
+
 }

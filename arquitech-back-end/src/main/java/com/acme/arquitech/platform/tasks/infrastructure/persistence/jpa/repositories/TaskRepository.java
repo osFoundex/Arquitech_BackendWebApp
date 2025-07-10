@@ -10,4 +10,5 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT t FROM Task t WHERE t.worker.id = :workerId AND t.project.id = :projectId")
     List<Task> findByWorkerIdAndProjectId(@Param("workerId") Long workerId, @Param("projectId") Long projectId);
+
 }

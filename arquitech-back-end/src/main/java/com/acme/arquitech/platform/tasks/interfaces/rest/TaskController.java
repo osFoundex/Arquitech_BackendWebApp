@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/projects/{projectId}/workers/{workerId}/tasks")
+@RequestMapping("/api/v1/tasks")
 @Tag(name = "Tasks", description = "Task Management Endpoints")
 public class TaskController {
     private final TaskCommandServiceImpl taskCommandService;
@@ -31,12 +31,11 @@ public class TaskController {
         this.projectRepository = projectRepository;
         this.workerRepository = workerRepository;
     }
-
     @GetMapping
-    public ResponseEntity<?> getTasksByWorkerAndProject(@PathVariable Long projectId, @PathVariable Long workerId) {
-        List<Task> tasks = taskCommandService.findByWorkerIdAndProjectId(workerId, projectId);
+    public ResponseEntity<?> getAllTasks() {
+        List<Task> tasks = taskCommandService.findAll();
         if (tasks.isEmpty()) {
-            return ResponseEntity.ok(new MessageResource("No tasks registered for this worker in the project"));
+            return ResponseEntity.ok(new MessageResource("No tasks registered"));
         }
         List<TaskResource> resources = tasks.stream()
                 .map(task -> new TaskResource(
@@ -51,31 +50,40 @@ public class TaskController {
         return ResponseEntity.ok(resources);
     }
 
+
     @PostMapping
-    public ResponseEntity<TaskResource> createTask(@PathVariable Long projectId, @PathVariable Long workerId, @Valid @RequestBody CreateTaskResource resource) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project with ID " + projectId + " not found"));
-        Worker worker = workerRepository.findById(workerId)
-                .orElseThrow(() -> new RuntimeException("Worker with ID " + workerId + " not found"));
-        Task task = new Task(
-                project,
-                worker,
-                resource.description(),
-                resource.startDate(),
-                resource.dueDate(),
-                resource.status()
-        );
-        Task savedTask = taskCommandService.create(task);
-        TaskResource response = new TaskResource(
-                savedTask.getId(),
-                savedTask.getProject().getId(),
-                savedTask.getWorker().getId(),
-                savedTask.getDescription(),
-                savedTask.getStartDate(),
-                savedTask.getDueDate(),
-                savedTask.getStatus()
-        );
-        return ResponseEntity.ok(response);
+    public ResponseEntity<TaskResource> createTask(@RequestBody CreateTaskResource resource) {
+        try {
+            Project project = new Project();
+            project.setId(resource.projectId());
+            Worker worker = new Worker();
+            worker.setId(resource.workerId());
+
+            Task task = new Task(
+                    project,
+                    worker,
+                    resource.description(),
+                    resource.startDate(),
+                    resource.dueDate(),
+                    resource.status()
+            );
+
+            Task savedTask = taskCommandService.create(task);
+
+            TaskResource response = new TaskResource(
+                    savedTask.getId(),
+                    savedTask.getProject().getId(),
+                    savedTask.getWorker().getId(),
+                    savedTask.getDescription(),
+                    savedTask.getStartDate(),
+                    savedTask.getDueDate(),
+                    savedTask.getStatus()
+            );
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PutMapping("/{taskId}")
